@@ -786,7 +786,8 @@ public class PlayerController : MonoBehaviour
             float currentStopDist = GetCurrentStopDistance();
             float remaining = distance - currentStopDist;
 
-            if (remaining > 0.02f)
+            // Chỉ lướt áp sát khi đứng trong tầm attackRange, ngoài tầm thì chỉ đánh animation tại chỗ
+            if (remaining > 0.02f && distance <= attackRange)
             {
                 float step = Mathf.Min(remaining, dashSpeed * Time.deltaTime);
                 moveVector = directionToEnemy.normalized * step;
@@ -1021,6 +1022,21 @@ public class PlayerController : MonoBehaviour
                     animator.CrossFadeInFixedTime(desiredHash, 0.10f);
                 }
             }
+        }
+
+        // Điều khiển UpperBody chỉ bật khi Lock-On bước Trái (A) hoặc Phải (D)
+        int upperBodyLayerIndex = animator.GetLayerIndex("UpperBody");
+        if (upperBodyLayerIndex != -1)
+        {
+            // Chỉ kích hoạt khi: Đang Lock-on + KHÔNG Sprint + Đang bước sang bên (A hoặc D)
+            bool isLockOnSideWalking = IsActivelyLockOnStrafing 
+                                       && !IsSprinting 
+                                       && Mathf.Abs(moveInput.x) > 0.2f;
+
+            float targetWeight = isLockOnSideWalking ? 1.0f : 0.0f;
+            float currentWeight = animator.GetLayerWeight(upperBodyLayerIndex);
+            float newWeight = Mathf.MoveTowards(currentWeight, targetWeight, 8.0f * Time.deltaTime);
+            animator.SetLayerWeight(upperBodyLayerIndex, newWeight);
         }
     }
 
