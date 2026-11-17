@@ -21,9 +21,10 @@ public class DummyEnemy : MonoBehaviour, IDamageable
     private CharacterController characterController;
     private Vector3 knockbackVelocity = Vector3.zero;
     private float verticalVelocity = 0f;
-    private Material dummyMaterial;
-    private Color originalColor;
-    private float flashTimer = 0f;
+    private readonly CombatFlashController flashController = new CombatFlashController();
+
+    public int HitCount { get; private set; }
+    public float LastHitForce { get; private set; }
 
     private void Awake()
     {
@@ -34,23 +35,10 @@ public class DummyEnemy : MonoBehaviour, IDamageable
             animator = GetComponentInChildren<Animator>();
         }
 
-        if (dummyRenderer == null)
-        {
-            dummyRenderer = GetComponentInChildren<Renderer>();
-        }
-
-        if (dummyRenderer != null)
-        {
-            dummyMaterial = dummyRenderer.material;
-            if (dummyMaterial.HasProperty("_BaseColor"))
-            {
-                originalColor = dummyMaterial.GetColor("_BaseColor");
-            }
-            else if (dummyMaterial.HasProperty("_Color"))
-            {
-                originalColor = dummyMaterial.color;
-            }
-        }
+        Renderer[] renderers = dummyRenderer != null
+            ? new[] { dummyRenderer }
+            : GetComponentsInChildren<Renderer>();
+        flashController.Initialize(renderers);
     }
 
     private void Update()
@@ -70,15 +58,7 @@ public class DummyEnemy : MonoBehaviour, IDamageable
         totalMove.y = verticalVelocity * Time.deltaTime;
         characterController.Move(totalMove);
 
-        // Hiệu ứng nhấp nháy đỏ khi ăn đòn
-        if (flashTimer > 0f)
-        {
-            flashTimer -= Time.deltaTime;
-            if (flashTimer <= 0f && dummyMaterial != null)
-            {
-                SetColor(originalColor);
-            }
-        }
+        flashController.Update(Time.deltaTime);
     }
 
     private void ApplyGravity()
@@ -101,32 +81,18 @@ public class DummyEnemy : MonoBehaviour, IDamageable
     /// </summary>
     public void TakeHit(Vector3 direction, float force)
     {
+        HitCount++;
+        LastHitForce = force;
         direction.y = 0f;
         // Đặt vận tốc đẩy lùi
         knockbackVelocity = direction.normalized * force;
 
-        // Nhấp nháy màu đỏ báo hiệu trúng đòn (Hit reaction)
-        if (dummyMaterial != null)
-        {
-            SetColor(hitColor);
-            flashTimer = 0.15f;
-        }
+        // Nhấp nháy đỏ phát sáng báo hiệu trúng đòn (Hit reaction)
+        flashController.TriggerFlash(hitColor, 0.26f, pulseHz: 14f, baseBlend: 0.72f, emissionIntensity: 2.8f);
 
-        if (animator != null)
+        if (animator != null && animator.HasState(0, Animator.StringToHash("Hit_F")))
         {
             animator.Play("Hit_F", 0, 0f);
-        }
-    }
-
-    private void SetColor(Color color)
-    {
-        if (dummyMaterial.HasProperty("_BaseColor"))
-        {
-            dummyMaterial.SetColor("_BaseColor", color);
-        }
-        else if (dummyMaterial.HasProperty("_Color"))
-        {
-            dummyMaterial.color = color;
         }
     }
 }

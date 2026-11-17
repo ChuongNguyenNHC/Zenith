@@ -1,0 +1,18 @@
+Human Motion-Capture Animations (Adobe Mixamo via Linzhan/Mixamo-Animations-Characters)
+Binary FBX files imported for Unity Humanoid retargeting onto RiggedNinja.
+
+Files in this directory:
+- Walk_F.fbx      <- Walking_2.fbx (loop, straight symmetric forward walk)
+- Run_F.fbx       <- Fast_Run.fbx (loop, straight athletic forward sprint)
+- Strafe_L.fbx    <- Jog_Strafe_Left.fbx (loop, combat left strafe)
+- Strafe_R.fbx    <- Jog_Strafe_Right.fbx (loop, combat right strafe)
+- Hit_F.fbx       <- Standing_React_Large_From_Front.fbx (trimmed frontal knockback recoil)
+- Hit_B.fbx       <- Standing_React_Small_From_Back.fbx (crisp rear-hit forward whip recoil)
+- Quickstep_F.fbx <- Long_Step_Forward.fbx (trimmed martial forward lunge-step, capsule-centered)
+- Quickstep_B.fbx <- Step_Backward_3.fbx (trimmed martial split-stride backstep, capsule-centered)
+- Quickstep_L.fbx <- Long_Left_Side_Step.fbx (trimmed martial sidestep left, capsule-centered)
+- Quickstep_R.fbx <- Long_Right_Side_Step.fbx (trimmed martial sidestep right, capsule-centered)
+- Avoid_Left.fbx  <- Dodging_Right.fbx (mirrored in-pocket slip left, A-pose ends trimmed)
+- Avoid_Right.fbx <- Dodging_Right.fbx (in-pocket slip right, A-pose ends trimmed)
+- Avoid_Duck.fbx  <- Dodging_2.fbx (trimmed in-pocket boxing duck/weave + recovery)
+- Avoid_Hop.fbx   <- Unarmed_Jump.fbx (trimmed in-place vertical knee-tuck martial hop)
